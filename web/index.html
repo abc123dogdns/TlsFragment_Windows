@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TlsFragment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .columns {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .column {
+            width: 30%;
+        }
+		
+		       .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #urlLink {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        #urlLink:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>全世界的无产者，团结起来！</h1>
+
+    <h2>使用技巧</h2>
+    <ul>
+        <li>在上方输入index回到首页，输入proxypac查看pac文件，输入cmdline查看给webview2的参数</li>
+        <li>在上方输入网址业内跳转，在下方输入网址以在新标签页中打开</li>
+        <li>Ctrl+R刷新，Alt+左回退，Alt+右前进，按住Ctrl点击链接在新标签页中打开</li>
+		<li>第一次使用点击“安装”，之后使用点击“运行”哦，不建议多次打开应用，使用应用内新标签页更好</li>
+		<li>页面内点击共享，可以复制链接</li>
+		<li><font color="red"><strong>全世界的无产者，联合起来！无产阶级革命万岁！</strong></font></li>
+		<li></li>
+    </ul>
+	
+	<h2>打开新标签页</h2>
+	<p>在左边输入网址</p>
+	<div class="container">
+        <input type="text" id="urlInput" placeholder="请输入网址" value="mlmistrevolutionagain.pages.dev">
+        <a href="https://mlmistrevolutionagain.pages.dev" id="urlLink" target="_blank" >访问网址</a>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const urlLink = document.getElementById('urlLink');
+		
+
+        urlInput.addEventListener('input', function () {
+            let inputValue = this.value.trim();
+            if (inputValue && !inputValue.startsWith('http')) {
+                inputValue = 'https://' + inputValue;
+            }
+            urlLink.href = inputValue;
+            urlLink.textContent = '访问';
+        });
+    </script>
+
+    <h2>推荐网站</h2>
+    <div class="columns">
+        <div class="column">
+            <ul>
+                <li><a href="https://zh.z-library.sk">电子书查找：Zlibrary</a></li>
+                <li><a href="https://annas-archive.org">电子书查找：Anaa's Archive</a></li>
+                <li><a href="https://bookstore.cmlmuf.top">马列毛主义统一战线图书馆</a></li>
+            </ul>
+        </div>
+        <div class="column">
+            <ul>
+				<li><a href="https://mlmistrevolutionagain.pages.dev/posts/Techo/Emergency/Network.html">网络安全入门</a></li>
+                <li><a href="https://mlmistrevolutionagain.pages.dev/posts/Techo/Emergency/XMPP.html">XMPP教程</a></li>
+                <li><a href="https://mlmistrevolutionagain.pages.dev">官方网站首页</a></li>
+            </ul>
+        </div>
+        <div class="column">
+            <ul>
+                <li><a href="https://mlmistrevolutionagain.pages.dev/posts/reommended">继续革命社推荐书单</a></li>
+                <li><a href="https://mlmistrevolutionagain.pages.dev/posts/Techo/Emergency/EMAIL.html">安全邮箱注册</a></li>
+                <li><a href="https://github.com/maoist2009/TlsFragment_Windows">项目主页</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+    
