@@ -10,10 +10,11 @@
 	<file name="DOMAINconfig.txt" path="DOMAINconfig.txt" comment="DOMAINconfig.txt"/>
 	<file name="安装.bat" path="安装.bat" comment="安装.bat"/>
 	<file name="运行.bat" path="运行.bat" comment="运行.bat"/>
-	<folder name="py" path="py" comment="py">
+	<folder name="py" path="py" comment="py" local="false" embed="false" ignored="false">
 		<file name="config.json" path="py\config.json" comment="py\config.json"/>
+		<file name="config_extra.json" path="py\config_extra.json" comment="py\config_extra.json"/>
 		<file name="run.py" path="py\run.py" comment="py\run.py"/>
-		<folder name="src" path="py\src" comment="py\src" local="false" embed="false" ignored="false">
+		<folder name="src" path="py\src" comment="py\src">
 			<folder name="tls_fragment" path="py\src\tls_fragment" comment="py\src\tls_fragment">
 				<file name="cli.py" path="py\src\tls_fragment\cli.py" comment="py\src\tls_fragment\cli.py"/>
 				<file name="config.py" path="py\src\tls_fragment\config.py" comment="py\src\tls_fragment\config.py"/>
@@ -26,33 +27,15 @@
 				<file name="__init__.py" path="py\src\tls_fragment\__init__.py" comment="py\src\tls_fragment\__init__.py"/>
 				<folder name="__pycache__" path="py\src\tls_fragment\__pycache__" comment="py\src\tls_fragment\__pycache__">
 					<file name="cli.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\cli.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\cli.cpython-313.pyc"/>
-					<file name="cli.cpython-37.pyc" path="py\src\tls_fragment\__pycache__\cli.cpython-37.pyc" comment="py\src\tls_fragment\__pycache__\cli.cpython-37.pyc"/>
-					<file name="cli.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\cli.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\cli.cpython-38.pyc"/>
-					<file name="cli.cpython-39.pyc" path="py\src\tls_fragment\__pycache__\cli.cpython-39.pyc" comment="py\src\tls_fragment\__pycache__\cli.cpython-39.pyc"/>
 					<file name="config.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\config.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\config.cpython-313.pyc"/>
-					<file name="config.cpython-37.pyc" path="py\src\tls_fragment\__pycache__\config.cpython-37.pyc" comment="py\src\tls_fragment\__pycache__\config.cpython-37.pyc"/>
-					<file name="config.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\config.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\config.cpython-38.pyc"/>
-					<file name="config.cpython-39.pyc" path="py\src\tls_fragment\__pycache__\config.cpython-39.pyc" comment="py\src\tls_fragment\__pycache__\config.cpython-39.pyc"/>
 					<file name="dns_extension.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\dns_extension.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\dns_extension.cpython-313.pyc"/>
-					<file name="dns_extension.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\dns_extension.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\dns_extension.cpython-38.pyc"/>
 					<file name="fake_desync.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\fake_desync.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\fake_desync.cpython-313.pyc"/>
-					<file name="fake_desync.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\fake_desync.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\fake_desync.cpython-38.pyc"/>
 					<file name="fragment.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\fragment.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\fragment.cpython-313.pyc"/>
-					<file name="fragment.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\fragment.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\fragment.cpython-38.pyc"/>
 					<file name="l38.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\l38.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\l38.cpython-313.pyc"/>
 					<file name="log.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\log.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\log.cpython-313.pyc"/>
-					<file name="log.cpython-37.pyc" path="py\src\tls_fragment\__pycache__\log.cpython-37.pyc" comment="py\src\tls_fragment\__pycache__\log.cpython-37.pyc"/>
-					<file name="log.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\log.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\log.cpython-38.pyc"/>
-					<file name="log.cpython-39.pyc" path="py\src\tls_fragment\__pycache__\log.cpython-39.pyc" comment="py\src\tls_fragment\__pycache__\log.cpython-39.pyc"/>
 					<file name="remote.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\remote.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\remote.cpython-313.pyc"/>
-					<file name="remote.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\remote.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\remote.cpython-38.pyc"/>
-					<file name="safecheck.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\safecheck.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\safecheck.cpython-313.pyc"/>
 					<file name="utils.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\utils.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\utils.cpython-313.pyc"/>
-					<file name="utils.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\utils.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\utils.cpython-38.pyc"/>
 					<file name="__init__.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\__init__.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\__init__.cpython-313.pyc"/>
-					<file name="__init__.cpython-37.pyc" path="py\src\tls_fragment\__pycache__\__init__.cpython-37.pyc" comment="py\src\tls_fragment\__pycache__\__init__.cpython-37.pyc"/>
-					<file name="__init__.cpython-38.pyc" path="py\src\tls_fragment\__pycache__\__init__.cpython-38.pyc" comment="py\src\tls_fragment\__pycache__\__init__.cpython-38.pyc"/>
-					<file name="__init__.cpython-39.pyc" path="py\src\tls_fragment\__pycache__\__init__.cpython-39.pyc" comment="py\src\tls_fragment\__pycache__\__init__.cpython-39.pyc"/>
 				</folder>
 			</folder>
 		</folder>
