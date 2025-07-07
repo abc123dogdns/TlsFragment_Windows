@@ -1,4 +1,4 @@
-py
+py/*
 pip
 !py/run.py
 !py/config.json
