@@ -144,6 +144,7 @@ if(_ARGV["p"]||_STUDIO_INVOKED)
 	CMDLine=CMDLine+" --proxy-pac-url="+pacpath;
 	
 	import process.python;
+	process.python.workDir="/py"
 	process.python.version="3.10.7"
 	
 	if(_ARGV["p"]!="nopip")

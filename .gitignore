@@ -2,14 +2,7 @@ py/
 pip
 !py/run.py
 !py/config.json
+!py/config_extra.json
 !py/src
 py/src/tls_fragment/__pycache__
-proxy.pac
 dist
-CMDline.txt
-dist/CMDline.txt
-AndroidECHO.txt
-dist/AndroidECHO.txt
-config.json
-DNS_cache.json
-build_error_log.txt
