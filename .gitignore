@@ -6,3 +6,10 @@ pip
 !py/src
 py/src/tls_fragment/__pycache__
 dist
+proxy.pac
+CMDline.txt
+AndroidECHO.txt
+config.json
+DNS_cache.json
+TTL_cache.json
+build_error_log.txt
