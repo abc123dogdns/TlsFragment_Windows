@@ -2,8 +2,25 @@ import ipaddress
 import socket
 import struct
 
+def expand_pattern(s):
+    left_index, right_index = s.find('('), s.find(')')
+    if left_index == -1 and right_index == -1:
+        return s.split('|')
+    if -1 in (left_index, right_index):
+        raise ValueError("Both '(' and ')' must be present", s)
+    if left_index > right_index:
+        raise ValueError("'(' must occur before ')'", s)
+    if right_index == left_index + 1:
+        raise ValueError(
+            'A vaild string should exist between a pair of parentheses', s
+        )
+    prefix = s[:left_index]
+    suffix = s[right_index + 1:]
+    inner = s[left_index + 1:right_index]
+    return [prefix + part + suffix for part in inner.split('|')]
 
-def ip_to_binary_prefix(ip_or_network):
+
+def ip_to_binary_prefix(ip_or_network:str):
     try:
         network = ipaddress.ip_network(ip_or_network, strict=False)
         network_address = network.network_address
@@ -25,8 +42,81 @@ def ip_to_binary_prefix(ip_or_network):
                 binary_prefix = binary_ip[:128]
             return binary_prefix
         except ValueError:
-            raise ValueError(f"输入的 {ip_or_network} 不是有效的 IP 地址或网络")
+            raise ValueError(f"input {ip_or_network} is not a valid IP or network address")
 
+def calc_redirect_ip(ip_str:str, mapper_str:str):
+    # 自动补全默认前缀
+    if '/' not in mapper_str:
+        if ':' in mapper_str:
+            mapper_str += '/128'  # IPv6 默认 /128
+        else:
+            mapper_str += '/32'   # IPv4 默认 /32
+
+    # 解析目标网络
+    mapper_network = ipaddress.ip_network(mapper_str, strict=False)
+
+    # 解析源 IP 地址
+    ip_obj = ipaddress.ip_address(ip_str)
+
+    # 根据 mapper 的地址族确定地址长度
+    if mapper_network.version == 4:
+        total_bits = 32
+        address_class = ipaddress.IPv4Address
+    else:
+        total_bits = 128
+        address_class = ipaddress.IPv6Address
+
+    prefixlen = mapper_network.prefixlen
+    fill_bits = total_bits - prefixlen
+
+    # 构建掩码
+    mask_fill = (1 << fill_bits) - 1
+    mask_keep = ((1 << total_bits) - 1) ^ mask_fill
+
+    # 获取源 IP 的整数表示
+    ip_int = int(ip_obj)
+
+    # 获取目标网络地址的整数表示
+    mapped_network_int = int(mapper_network.network_address)
+
+    # 计算填充部分
+    fill_part = ip_int & mask_fill
+
+    # 合成新的 IP 地址整数
+    new_int = (mapped_network_int & mask_keep) | fill_part
+
+    # 构造新的 IP 地址对象
+    return str(address_class(new_int))
+
+def is_ip_address(s: str) -> bool:
+    try:
+        ipaddress.ip_address(s)
+        return True
+    except ValueError:
+        return False
+
+def fake_ttl_mapping(config, dist):
+    if not config.startswith('q'):
+        return int(config)
+    items = config[1:].split(';')
+    intervals = []
+    for item in items:
+        if '-' in item:
+            a, b = map(int, item.split('-'))
+            intervals.append((a, '-', b))  # a-b
+        elif '=' in item:
+            a, val = map(int, item.split('='))
+            intervals.append((a, '=', val))  # a=b
+
+    intervals.sort(reverse=True, key=lambda x: x[0])
+
+    for a, typ, val in intervals:
+        if dist >= a:
+            if typ == '-':
+                return dist - val
+            elif typ == '=':
+                return val
+    raise ValueError
 
 def set_ttl(sock, ttl):
     if sock.family == socket.AF_INET6:
@@ -298,11 +388,11 @@ def fake_udp_dns_query(query):
     for question in dns_query.question:
         if question.rdtype == dns.rdatatype.A:
             # A记录返回127.0.0.1
-            a_record = dns.rrset.from_text(question.name, 3600,"IN", "A", "66.254.114.41")
+            a_record = dns.rrset.from_text(question.name, 3600,"IN", "A", "127.0.0.114")
             response.answer.append(a_record)
         elif question.rdtype == dns.rdatatype.AAAA:
             # AAAA记录返回::1
-            aaaa_record = dns.rrset.from_text(question.name, 3600,"IN" , "AAAA", "2a03:2880:f127:83:face:b00c:0:25de")
+            aaaa_record = dns.rrset.from_text(question.name, 3600,"IN" , "AAAA", "::114")
             
             response.answer.append(aaaa_record)
         else:

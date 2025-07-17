@@ -4,7 +4,7 @@ site
 
 from .log import logger
 from .config import (
-    domain_policies,
+    domain_map,
     config,
     default_policy,
     ipv4_map,
@@ -18,6 +18,8 @@ from .config import (
 from .dns_extension import MyDoh
 import socket
 import threading
+import time
+import ipaddress
 from . import utils
 
 logger = logger.getChild("remote")
@@ -27,24 +29,33 @@ cnt_upd_TTL_cache = 0
 lock_TTL_cache = threading.Lock()
 cnt_upd_DNS_cache = 0
 lock_DNS_cache = threading.Lock()
-
-
-def redirect(ip):
+def match_ip(ip):
     if ':' in ip:
-        mapped_ip = ipv6_map.search(utils.ip_to_binary_prefix(ip))
+        return ipv6_map.search(utils.ip_to_binary_prefix(ip))
     else:
-        mapped_ip = ipv4_map.search(utils.ip_to_binary_prefix(ip))
-    if mapped_ip is None:
+        return ipv4_map.search(utils.ip_to_binary_prefix(ip))
+        
+def redirect_ip(ip):
+    mapped_ip_policy=match_ip(ip)
+    if mapped_ip_policy is None or mapped_ip_policy.get("redirect") is None:
         return ip
-    logger.info(f"IP redirect {ip} to {mapped_ip}")
+    mapped_ip = mapped_ip_policy["redirect"]
+    
+    stopchain=False
     if mapped_ip[0] == "^":
-        return mapped_ip[1:]
-    if ip == mapped_ip:
+        mapped_ip=mapped_ip[1:]
+        stopchain=True
+    mapped_ip = utils.calc_redirect_ip(ip,mapped_ip)
+    
+    if ip==mapped_ip:
         return mapped_ip
-    return redirect(mapped_ip)
+    logger.info(f"IP redirect {ip} to {mapped_ip}")
+    if stopchain:
+        return mapped_ip
+    return redirect_ip(mapped_ip)
 
 def match_domain(domain):
-    matched_domains = domain_policies.search("^" + domain + "$")
+    matched_domains = domain_map.search("^" + domain + "$")
     if matched_domains:
         import copy
         return copy.deepcopy(
@@ -69,21 +80,13 @@ class Remote:
         self.policy = {**default_policy, **self.policy}
         self.policy.setdefault("port", port)
         self.protocol = protocol
-        import ipaddress
-
-        try:
-            ipaddress.IPv4Address(self.domain)
+        
+        if utils.is_ip_address(self.domain):
             self.policy["IP"] = self.domain
-        except:
-            try:
-                ipaddress.IPv6Address(self.domain)
-                self.policy["IP"] = self.domain
-            except:
-                pass
         
         if self.policy.get("IP") is None:
             if DNS_cache.get(self.domain) is not None:
-                self.address = DNS_cache[self.domain]
+                self.address = DNS_cache[self.domain]['ip']
                 logger.info("DNS cache for %s is %s", self.domain, self.address)
             else:
                 if self.policy.get("IPtype") == "ipv6":
@@ -96,48 +99,63 @@ class Remote:
                         self.address = resolver.resolve(self.domain, "A")
                     except:
                         self.address = resolver.resolve(self.domain, "AAAA")
-                if self.address:
+                if self.address and self.policy["DNS_cache"]:
                     global cnt_upd_DNS_cache, lock_DNS_cache
                     lock_DNS_cache.acquire()
-                    DNS_cache[self.domain] = self.address
+                    if ttl := self.policy.get('DNS_cache_TTL'):
+                        expires = time.time() + ttl
+                    else:
+                        expires = None
+                    DNS_cache[self.domain] = {
+                        'ip': self.address, 'expires': expires
+                    }
                     cnt_upd_DNS_cache += 1
                     if cnt_upd_DNS_cache >= config["DNS_cache_update_interval"]:
                         cnt_upd_DNS_cache = 0
                         write_DNS_cache()
                     lock_DNS_cache.release()
                     logger.info(f"DNS cache for {self.domain} to {self.address}")
+            self.address = redirect_ip(self.address)
+            # will redirect ip only if it it connected by domain
         else:
             self.address = self.policy["IP"]
-        self.address = redirect(self.address)
+            if config["redirect_when_ip"]:
+                self.address = redirect_ip(self.address)
+
+        mapped_ip_policy=match_ip(self.address)
+        if mapped_ip_policy is not None:
+                self.policy={**self.policy,**mapped_ip_policy}
+
         self.port = self.policy["port"]
 
-        logger.info("%s %d", self.address, self.port)
-        # res["IP"]="127.0.0.1"
-
-        if self.policy["fake_ttl"] == "query" and self.policy["mode"] == "FAKEdesync":
+        logger.info("connect %s %d", self.address, self.port)
+        
+        if self.policy["fake_ttl"][0] == "q" and self.policy["mode"] == "FAKEdesync":
             logger.info(f'FAKE TTL for {self.address} is {self.policy.get("fake_ttl")}')
             if TTL_cache.get(self.address) != None:
-                self.policy["fake_ttl"] = TTL_cache[self.address] - 1
+                val = TTL_cache[self.address]
                 logger.info(
-                    "FAKE TTL for %s is %d", self.address, self.policy.get("fake_ttl")
+                    "dist for %s is %d, found in cache", self.address, val
                 )
             else:
-                logger.info("%s %d", self.address, self.policy.get("port"))
                 val = utils.get_ttl(self.address, self.policy.get("port"))
                 if val == -1:
                     raise Exception("ERROR get ttl")
-                global cnt_upd_TTL_cache, lock_TTL_cache
-                lock_TTL_cache.acquire()
-                TTL_cache[self.address] = val
-                cnt_upd_TTL_cache += 1
-                if cnt_upd_TTL_cache >= config["TTL_cache_update_interval"]:
-                    cnt_upd_TTL_cache = 0
-                    write_TTL_cache()
-                lock_TTL_cache.release()
-                self.policy["fake_ttl"] = val - 1
+                if self.policy["TTL_cache"]:
+                    global cnt_upd_TTL_cache, lock_TTL_cache
+                    lock_TTL_cache.acquire()
+                    TTL_cache[self.address] = val
+                    cnt_upd_TTL_cache += 1
+                    if cnt_upd_TTL_cache >= config["TTL_cache_update_interval"]:
+                        cnt_upd_TTL_cache = 0
+                        write_TTL_cache()
+                    lock_TTL_cache.release()
                 logger.info(
-                    "FAKE TTL for %s is %d", self.address, self.policy.get("fake_ttl")
+                    "dist for %s is %d", self.address, val
                 )
+            self.policy["fake_ttl"]=utils.fake_ttl_mapping(self.policy["fake_ttl"],val) 
+            logger.info(
+                    "FAKE TTL for %s is %d", self.address, self.policy["fake_ttl"])
 
         logger.info(f"{domain} --> {self.policy}")
 

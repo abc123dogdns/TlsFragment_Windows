@@ -4,7 +4,8 @@ import ahocorasick
 import json
 import ipaddress
 import random
-from .utils import ip_to_binary_prefix
+import time
+from .utils import ip_to_binary_prefix,expand_pattern
 
 basepath = Path(__file__).parent.parent.parent
 
@@ -44,10 +45,6 @@ class Trie:
             ans = node.val
         return ans
 
-
-ipv4trie = Trie()
-ipv6trie = Trie()
-
 if not Path("config.json").exists():
     shutil.copyfile(basepath / "config.json", "config.json")
 with open("config.json", "rb") as f:
@@ -63,34 +60,38 @@ try:
 except:
     pass
 
-default_policy = {
-    "num_tls_pieces": config["num_tls_pieces"],
-    "num_tcp_pieces": config["num_tcp_pieces"],
-    "len_tcp_sni": config["len_tcp_sni"],
-    "len_tls_sni": config["len_tls_sni"],
-    "mode": config["mode"],
-    "fake_packet": config["fake_packet"].encode(encoding="UTF-8"),
-    "fake_ttl": config["fake_ttl"],
-    "fake_sleep": config["fake_sleep"],
-    "send_interval": config["send_interval"],
-    "DNS_cache": config["DNS_cache"],
-    "TTL_cache": config["TTL_cache"],
-    "safety_check": config["safety_check"],
-}
+default_policy = config["default_policy"]
+default_policy["fake_packet"]= default_policy["fake_packet"].encode(encoding="UTF-8")
 
-domain_policies = ahocorasick.AhoCorasick(*config["domains"].keys())
+expanded_policies = {}
+for key in config['domains'].keys():
+    for item in key.replace(' ', '').split(','):
+        for pattern in expand_pattern(item):
+            expanded_policies[pattern] = config['domains'][key]
+
+config['domains'] = expanded_policies
+
+domain_map = ahocorasick.AhoCorasick(*config["domains"].keys())
 ipv4_map = Trie()
 ipv6_map = Trie()
 
-for k, v in config["IPredirect"].items():
+expanded_policies = {}
+for key in config['IPs'].keys():
+    for item in key.replace(' ', '').split(','):
+        for pattern in expand_pattern(item):
+            expanded_policies[pattern] = config['IPs'][key]
+
+config['IPs'] = expanded_policies
+
+for k, v in config["IPs"].items():
     if ':' in k:
         ipv6_map.insert(ip_to_binary_prefix(k), v)
     else:
         ipv4_map.insert(ip_to_binary_prefix(k), v)
 
-if config["fake_ttl"] == "auto":
+if default_policy["fake_ttl"] == "auto":
     # temp code for auto fake_ttl
-    config["fake_ttl"] = random.randint(10, 60)
+    default_policy["fake_ttl"] = random.randint(10, 60)
 
 TTL_cache = {}  # TTL for each IP
 DNS_cache = {}  # DNS cache for each domain
@@ -114,3 +115,12 @@ def write_DNS_cache():
 def write_TTL_cache():
     with open("TTL_cache.json", "w") as f:
         json.dump(TTL_cache, f)
+
+t = time.time()
+for domain, value in DNS_cache.items():
+    if value['expires'] is not None and value['expires'] < t:
+        print(
+            f'DNS cache for {domain} expired and will be removed.'
+        )
+        DNS_cache.pop(domain)
+write_DNS_cache()
