@@ -3,6 +3,7 @@ pip
 !py/run.py
 !py/config.json
 !py/config_extra.json
+!py/config_pac.json
 !py/src
 py/src/tls_fragment/__pycache__
 dist
