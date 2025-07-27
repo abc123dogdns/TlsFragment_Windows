@@ -23,26 +23,29 @@ var url="/web/index.html";
 if(_ARGV["u"])
 {
 	import inet.http
-	var mirror_list={"https://raw.bgithub.xyz/maoist2009/TlsFragment/refs/heads/main/config.json","https://raw.githubusercontent.com/maoist2009/TlsFragment/refs/heads/main/config.json"}
-	var flag=false
-	var http = inet.http();
-	for id,mirror in mirror_list {
-		var data,err,errCode = http.get(mirror);
-		
-		if( http.statusCode ==200 ){
-    		import fsys.file
-    		var fcfg=fsys.file("/py/config.json","w")
-    		fcfg.write(data)
-    		fcfg.close()
-    		flag=true
-    		break
+	var mirror_list={"https://raw.bgithub.xyz/maoist2009/TlsFragment/refs/heads/main/","https://raw.githubusercontent.com/maoist2009/TlsFragment/refs/heads/main/"}
+	var file_list={"config.json","config_pac.json"}
+	for idfile,file in file_list{
+		var flag=false
+		var http = inet.http();
+		for id,mirror in mirror_list {
+			var data,err,errCode = http.get(mirror+file);
+			
+			if( http.statusCode ==200 ){
+    			import fsys.file
+    			var fcfg=fsys.file("/py/"+file,"w")
+    			fcfg.write(data)
+    			fcfg.close()
+    			flag=true
+    			break
+			}
 		}
+		if(flag)
+		{
+			win.msgbox("更新"+file+"配置成功","更新成功")
+		}
+		http.close()
 	}
-	if(flag)
-	{
-		win.msgbox("更新config.json配置成功","更新成功")
-	}
-	http.close()
 }
 if(_ARGV["c"]) 
 {
