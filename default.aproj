@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TlsFragment" libEmbed="true" icon="lib\icon.ico" ui="win" output="TlsFragment.exe" CompanyName="MLM" FileDescription="Tlsfragment_Windows" LegalCopyright="Copyleft (C) People 2025" ProductName="Tlsfragment_Windows" InternalName="Tlsfragment_Windows" FileVersion="3.2.0.0" ProductVersion="3.2.0.0" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TlsFragment" libEmbed="true" icon="lib\icon.ico" ui="win" output="TlsFragment.exe" CompanyName="MLM" FileDescription="Tlsfragment_Windows" LegalCopyright="Copyleft (C) People 2025" ProductName="Tlsfragment_Windows" InternalName="Tlsfragment_Windows" FileVersion="3.3.0.0" ProductVersion="3.3.0.0" publishDir="/dist/" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false" ignored="false"/>
 	<folder name="web" path="web" comment="web" local="true" embed="false" ignored="false"/>
@@ -13,6 +13,7 @@
 	<folder name="py" path="py" comment="py" local="false" embed="false" ignored="false">
 		<file name="config.json" path="py\config.json" comment="py\config.json"/>
 		<file name="config_extra.json" path="py\config_extra.json" comment="py\config_extra.json"/>
+		<file name="config_pac.json" path="py\config_pac.json" comment="py\config_pac.json"/>
 		<file name="run.py" path="py\run.py" comment="py\run.py"/>
 		<folder name="src" path="py\src" comment="py\src">
 			<folder name="tls_fragment" path="py\src\tls_fragment" comment="py\src\tls_fragment">
@@ -22,21 +23,10 @@
 				<file name="fake_desync.py" path="py\src\tls_fragment\fake_desync.py" comment="py\src\tls_fragment\fake_desync.py"/>
 				<file name="fragment.py" path="py\src\tls_fragment\fragment.py" comment="py\src\tls_fragment\fragment.py"/>
 				<file name="log.py" path="py\src\tls_fragment\log.py" comment="py\src\tls_fragment\log.py"/>
+				<file name="pac.py" path="py\src\tls_fragment\pac.py" comment="py\src\tls_fragment\pac.py"/>
 				<file name="remote.py" path="py\src\tls_fragment\remote.py" comment="py\src\tls_fragment\remote.py"/>
 				<file name="utils.py" path="py\src\tls_fragment\utils.py" comment="py\src\tls_fragment\utils.py"/>
 				<file name="__init__.py" path="py\src\tls_fragment\__init__.py" comment="py\src\tls_fragment\__init__.py"/>
-				<folder name="__pycache__" path="py\src\tls_fragment\__pycache__" comment="py\src\tls_fragment\__pycache__">
-					<file name="cli.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\cli.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\cli.cpython-313.pyc"/>
-					<file name="config.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\config.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\config.cpython-313.pyc"/>
-					<file name="dns_extension.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\dns_extension.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\dns_extension.cpython-313.pyc"/>
-					<file name="fake_desync.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\fake_desync.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\fake_desync.cpython-313.pyc"/>
-					<file name="fragment.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\fragment.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\fragment.cpython-313.pyc"/>
-					<file name="l38.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\l38.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\l38.cpython-313.pyc"/>
-					<file name="log.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\log.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\log.cpython-313.pyc"/>
-					<file name="remote.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\remote.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\remote.cpython-313.pyc"/>
-					<file name="utils.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\utils.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\utils.cpython-313.pyc"/>
-					<file name="__init__.cpython-313.pyc" path="py\src\tls_fragment\__pycache__\__init__.cpython-313.pyc" comment="py\src\tls_fragment\__pycache__\__init__.cpython-313.pyc"/>
-				</folder>
 			</folder>
 		</folder>
 	</folder>

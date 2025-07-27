@@ -142,9 +142,11 @@ if(_ARGV["p"]||_STUDIO_INVOKED)
 	cfg=web.json.parse(cfg)
 	//win.msgbox(cfg)
 	
-	var pacpath="http://127.0.0.1:"+cfg["port"]+"/proxy.pac"
+	//var pacpath="http://127.0.0.1:"+cfg["port"]+"/proxy.pac"
+	//CMDLine=CMDLine+" --proxy-pac-url="+pacpath;
 	
-	CMDLine=CMDLine+" --proxy-pac-url="+pacpath;
+	var proxypath="http://127.0.0.1:"+cfg["port"]
+	CMDLine=CMDLine+"--proxy-server="+'"'+proxypath+'"';
 	
 	import process.python;
 	process.python.workDir="/py"
