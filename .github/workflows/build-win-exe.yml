@@ -39,18 +39,9 @@ jobs:
           Write-Output "Building $($env:MATRIX_ARCH) version..."
           .\aardio\aardio.exe /build py/run.aproj
 
-      # 6️⃣ 自动查找生成的 exe
-      - name: Find generated exe
-        id: find_exe
-        run: |
-          $exe = Get-ChildItem -Path . -Filter *.exe -Recurse | Where-Object { $_.FullName -notmatch "aardio" } | Select-Object -First 1
-          if (-not $exe) { Write-Error "No exe found!"; exit 1 }
-          Write-Output "Found exe: $($exe.FullName)"
-          echo "EXE_PATH=$($exe.FullName)" >> $env:GITHUB_ENV
-
-      # 7️⃣ 上传构建产物
+      # 6️⃣ 上传构建产物（明确输出目录）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TlsFragment-Client-${{ matrix.arch }}
-          path: ${{ env.EXE_PATH }}
+          path: py\bin\*.exe
