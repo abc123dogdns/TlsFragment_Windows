@@ -1,14 +1,15 @@
 name: Build Windows EXE
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # 手动触发构建
 
 jobs:
   build:
-    runs-on: windows-2022   # 避免未来迁移风险
+    runs-on: windows-2022
     strategy:
       matrix:
-        arch: [x86, x64]   # 打包 32位 / 64位
+        arch: [x86, x64]   # 同时打包 32 位 / 64 位
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,12 +24,19 @@ jobs:
         run: |
           pip install pyinstaller pydivert pycryptodome psutil
 
+      - name: Show files (debug)
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Files:"
+          dir
+
       - name: Build exe
         run: |
-          pyinstaller --onefile main.py
+          pyinstaller --onefile py/run.py --name TlsFragment-${{ matrix.arch }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4   # ✅ 用 v4
+        uses: actions/upload-artifact@v4
         with:
-          name: tlsfragment-${{ matrix.arch }}
-          path: dist/*
+          name: TlsFragment-${{ matrix.arch }}
+          path: dist/TlsFragment-${{ matrix.arch }}.exe
