@@ -1,42 +1,44 @@
-name: Build Windows EXE
+name: Build TlsFragment Client (Aardio)
 
 on:
-  workflow_dispatch:   # 手动触发构建
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-2022
     strategy:
       matrix:
-        arch: [x86, x64]   # 同时打包 32 位 / 64 位
+        arch: [x86, x64]   # 构建 32/64 位
 
     steps:
+      # 1️⃣ 拉取仓库
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          architecture: ${{ matrix.arch }}
-
-      - name: Install dependencies
+      # 2️⃣ 安装依赖（如果有 Python 或其他工具，可在这里安装）
+      - name: Setup dependencies
         run: |
-          pip install pyinstaller pydivert pycryptodome psutil
+          echo "No extra dependencies needed for aardio build"
 
-      - name: Show files (debug)
+      # 3️⃣ 显示目录（调试）
+      - name: Show files
         run: |
           echo "Current directory:"
           pwd
           echo "Files:"
           dir
 
-      - name: Build exe
+      # 4️⃣ 编译客户端
+      - name: Build Client
         run: |
-          pyinstaller --onefile py/run.py --name TlsFragment-${{ matrix.arch }}
-
+          echo "Building ${{ matrix.arch }} version..."
+          # 假设你的工程在仓库根目录 py/run.aproj
+          # 构建不同位数需要修改工程配置或使用 aardio 命令行参数
+          .\aardio\aardio.exe /build py/run.aproj
+          
+      # 5️⃣ 上传构建结果
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TlsFragment-${{ matrix.arch }}
-          path: dist/TlsFragment-${{ matrix.arch }}.exe
+          name: TlsFragment-Client-${{ matrix.arch }}
+          path: bin\*.exe
