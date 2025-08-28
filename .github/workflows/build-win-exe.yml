@@ -8,27 +8,48 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        arch: [x86, x64]
+        arch: [x86, x64]   # 构建 32位和64位
 
     steps:
+      # 1️⃣ 拉取仓库
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2️⃣ 下载 Aardio 官方压缩包
       - name: Download Aardio
         run: |
           curl -L -o aardio.7z https://d.aardio.com/ide/aardio.7z
 
+      # 3️⃣ 解压
       - name: Extract Aardio
         run: |
           7z x aardio.7z -oaardio
+          dir aardio
 
+      # 4️⃣ 显示目录（调试）
+      - name: Show project folder
+        run: |
+          echo "Project directory content:"
+          dir /s
+
+      # 5️⃣ 构建 Aardio 工程
       - name: Build Client
         run: |
           echo "Building ${{ matrix.arch }} version..."
           .\aardio\aardio.exe /build py/run.aproj
 
+      # 6️⃣ 自动查找生成的 exe
+      - name: Find generated exe
+        id: find_exe
+        run: |
+          $exe = Get-ChildItem -Path . -Filter *.exe -Recurse | Where-Object { $_.FullName -notmatch "aardio" } | Select-Object -First 1
+          if (-not $exe) { Write-Error "No exe found!"; exit 1 }
+          Write-Output "Found exe: $($exe.FullName)"
+          echo "EXE_PATH=$($exe.FullName)" >> $GITHUB_ENV
+
+      # 7️⃣ 上传构建产物
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TlsFragment-Client-${{ matrix.arch }}
-          path: bin\*.exe
+          path: ${{ env.EXE_PATH }}
